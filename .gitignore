@@ -3,5 +3,5 @@
 *.dll
 *.bat
 *.zip
-/Build/
+Build/
 .vscode/
