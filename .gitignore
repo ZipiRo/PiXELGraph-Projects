@@ -1,0 +1,6 @@
+*.exe
+*.out
+*.dll
+*.bat
+/build/
+.vscode/
