@@ -217,7 +217,7 @@ private:
         points.push_back(point7);
         points.push_back(point8);
 
-        position1 = Vector3(0, 0, 0);
+        position1 = Vector3(0, 0, 100);
         angle1 = Vector3(0, PI / 3, 0);
         scale1 = Vector3(20, 20, 20);
 
