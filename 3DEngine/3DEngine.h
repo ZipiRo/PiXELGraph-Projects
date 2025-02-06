@@ -1,4 +1,4 @@
-#include "Include/PixelGraph.h"
+#include "../Include/PixelGraph.h"
 #include "Vector3.h"
 #include "Matrix.h"
 

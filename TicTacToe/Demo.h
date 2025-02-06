@@ -1,4 +1,4 @@
-#include "Include/PixelGraph.h"
+#include "../Include/PixelGraph.h"
 
 int cellSize = 40;
 int gameWidth = cellSize * 3;
@@ -14,7 +14,7 @@ public:
         this->timeScale = 1;
         this->FPS = 60;
 
-        Init(gameWidth + 1, gameHeight + 15 + 1, 3); // +1 for centering
+        Init(gameWidth + 1, gameHeight + 15 + 1, 4); // +1 for centering
     }
 
 private:
