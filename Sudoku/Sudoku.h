@@ -6,7 +6,7 @@ public:
     Game()
     {
         this->backgroundColor = Color::White; 
-        this->windowTitle = L"TicTacToe";
+        this->windowTitle = L"Sudoku";
         this->timeScale = 1;
         this->FPS = 60;
 
