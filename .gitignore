@@ -3,5 +3,6 @@
 *.dll
 *.bat
 *.zip
+*.ini
 Build/
 .vscode/

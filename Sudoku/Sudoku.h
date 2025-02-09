@@ -1,4 +1,5 @@
 #include "../Include/PixelGraph.h"
+#include "ColorPalletes.h"
 
 struct mCell
 {
@@ -81,7 +82,7 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color(246, 248, 239);
+        this->backgroundColor = Color::White;
         this->windowTitle = L"Sudoku";
         this->timeScale = 1;
         this->FPS = 120;
@@ -94,28 +95,31 @@ private:
     Vector2 mosusePosition;
 
     Text titleText;
-    Color titleColor = Color(183, 160, 0);
+    Color titleColor;
 
     Sudoku sudoku;
     Rectangle cell;
     Text cellNumber;
     
-    Color cellColor = Color::White;
-    Color cellBorderColor = Color(100, 100, 100);
-    Color borderColor = Color::Black;
-    Color numberColor = Color::Black;
-    Color lnumberColor = Color::Gray;
+    Color cellColor;
+    Color cellBorderColor;
+    Color borderColor;
+    Color numberColor;
+    Color lnumberColor;
 
     Elipse rowCircle;
     Text rowNumber;
 
-    Color rowNumberColor = Color::Black;
-    Color rowCircleBorderColor = Color::Black;
-    Color rowCircleColor = Color::White;
-    Color uRowCircleColor = Color::Gray;
-    Color fRowCircleColor = Color::Blue;
+    Color rowNumberColor;
+    Color rowCircleBorderColor;
+    Color rowCircleColor;
+    Color uRowCircleColor;
+    Color fRowCircleColor;
+    
+    Color colorb;
 
     int emptyCells;
+    bool completed = false;
 
     void CreateSudokuMatrix()
     {   
@@ -176,7 +180,9 @@ private:
 
     void DrawGameBoard(Screen &screen)
     {   
-        // draw small squares
+        titleText.GetTransform().MoveTo(Vector2(sudoku.position.x + 25, sudoku.position.y - 20));
+        titleText.Draw(screen);
+
         Vector2 cellPosition;
         for(int i = 0; i < 9; i++)
         {
@@ -252,7 +258,7 @@ private:
             rowNumber.Draw(screen);
         }
     }
-    
+
     bool CompletedBoard()
     {
         for(int i = 0; i < 9; i++)
@@ -285,14 +291,45 @@ private:
             mosusePosition.y > top;
     }
 
-    void OnStart() override
+    void InitializeSudoku()
     {
-        font = Font("Resources/basic.f2p");
+        std::ifstream settings("sett.ini");
+        if(!settings)
+        {
+            emptyCells = 30;
+            ParseColorPalette(7);
+        }
+        else 
+        {
+            int x;
+            settings >> x;
+            if(x < 50) emptyCells = x;
+                else emptyCells = 50;
+    
+            settings >> x;
+            ParseColorPalette(x);
+        }
 
-        emptyCells = 1;
+        backgroundColor = Color(color1.r + 30, color1.g + 20, color1.b + 40);
+
+        titleColor = color3;
+        
+        cellColor = color1;
+        cellBorderColor = color2;
+        borderColor = color3;
+        numberColor = color4;
+        lnumberColor = color2;
+
+        rowNumberColor = color3;
+        rowCircleBorderColor = color2;
+        rowCircleColor = color1;
+        uRowCircleColor = color4;
+        fRowCircleColor = color2;
+
+        settings.close();
 
         // title
-        titleText = Text(53, 13);
+        titleText = Text(40, 50);
         titleText.SetFont(font);
         titleText.SetString("SUDOKU");
         titleText.SetFontWeight(2);
@@ -329,6 +366,13 @@ private:
         CreateSudokuMatrix();
     }
 
+    void OnStart() override
+    {
+        font = Font("Resources/basic.f2p");
+        
+        InitializeSudoku();
+    }
+
     float frameTimer = 1;
     void OnUpdate(float deltaTime) override
     {   
@@ -347,50 +391,52 @@ private:
             for(int j = 0; j < 9; j++)
             {
                 if(IsMouseOnCell(i, j)){ sudoku.table[i][j].mouseOn = true; sudoku.mousei = i; sudoku.mousej = j;}
-                    else sudoku.table[i][j].mouseOn = false;
+                else sudoku.table[i][j].mouseOn = false;
             }
         }
-
-        if(input.isKeyDown(Key_1)) sudoku.usingNumber = 1;
-        if(input.isKeyDown(Key_2)) sudoku.usingNumber = 2;
-        if(input.isKeyDown(Key_3)) sudoku.usingNumber = 3;
-        if(input.isKeyDown(Key_4)) sudoku.usingNumber = 4;
-        if(input.isKeyDown(Key_5)) sudoku.usingNumber = 5;
-        if(input.isKeyDown(Key_6)) sudoku.usingNumber = 6;
-        if(input.isKeyDown(Key_7)) sudoku.usingNumber = 7;
-        if(input.isKeyDown(Key_8)) sudoku.usingNumber = 8;
-        if(input.isKeyDown(Key_9)) sudoku.usingNumber = 9;
-
-        if(input.isKeyDown(Key_Space))
+            
+        if(!completed)
         {
-            if(CompletedBoard())
+            if(input.isKeyDown(Key_1)) sudoku.usingNumber = 1;
+            if(input.isKeyDown(Key_2)) sudoku.usingNumber = 2;
+            if(input.isKeyDown(Key_3)) sudoku.usingNumber = 3;
+            if(input.isKeyDown(Key_4)) sudoku.usingNumber = 4;
+            if(input.isKeyDown(Key_5)) sudoku.usingNumber = 5;
+            if(input.isKeyDown(Key_6)) sudoku.usingNumber = 6;
+            if(input.isKeyDown(Key_7)) sudoku.usingNumber = 7;
+            if(input.isKeyDown(Key_8)) sudoku.usingNumber = 8;
+            if(input.isKeyDown(Key_9)) sudoku.usingNumber = 9;
+            
+            if(input.isKeyDown(Key_Space))
             {
-                titleText.SetColor(Color::Red);
+                if(CompletedBoard())
+                {
+                    fRowCircleColor = color3;
+                    completed = true;
+                }
             }
-        }
-
-        if(IsMouseOnCell(sudoku.mousei, sudoku.mousej))
-        {
-            if(input.isMouseButtonDown(Mouse::Left) && sudoku.table[sudoku.mousei][sudoku.mousej].number == 0 && sudoku.usedNumbers[sudoku.usingNumber - 1] < 9)
+            
+            if(IsMouseOnCell(sudoku.mousei, sudoku.mousej))
             {
-                sudoku.table[sudoku.mousei][sudoku.mousej].number = sudoku.usingNumber;
-                sudoku.usedNumbers[sudoku.usingNumber - 1]++;
-            }
-
-            if(input.isMouseButtonDown(Mouse::Right) && sudoku.table[sudoku.mousei][sudoku.mousej].number != 0 && !sudoku.table[sudoku.mousei][sudoku.mousej].lookedNumber)
-            {
-                sudoku.usedNumbers[sudoku.table[sudoku.mousei][sudoku.mousej].number - 1]--;
-                sudoku.table[sudoku.mousei][sudoku.mousej].number = 0;
-            }
+                if(input.isMouseButtonDown(Mouse::Left) && sudoku.table[sudoku.mousei][sudoku.mousej].number == 0 && sudoku.usedNumbers[sudoku.usingNumber - 1] < 9)
+                {
+                    sudoku.table[sudoku.mousei][sudoku.mousej].number = sudoku.usingNumber;
+                    sudoku.usedNumbers[sudoku.usingNumber - 1]++;
+                }
+                
+                if(input.isMouseButtonDown(Mouse::Right) && sudoku.table[sudoku.mousei][sudoku.mousej].number != 0 && !sudoku.table[sudoku.mousei][sudoku.mousej].lookedNumber)
+                {
+                    sudoku.usedNumbers[sudoku.table[sudoku.mousei][sudoku.mousej].number - 1]--;
+                    sudoku.table[sudoku.mousei][sudoku.mousej].number = 0;
+                }
+            } 
         }
     }
-
+    
     void OnDraw(Screen &screen) override
     {
         DrawGameBoard(screen);
         DrawNumberRow(screen);
-
-        titleText.Draw(screen);
     }
 
     void OnQuit() override
