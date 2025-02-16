@@ -52,8 +52,12 @@ void FillShape(Screen &screen, const Box &boundingBox, const std::vector<Vector2
     if(minY > maxY)
         std::swap(minY, maxY);
 
+    if(minY < 0 && maxY >= 0) minY = 0;
+    else if(minY < 0 || maxY < 0)
+        return;
+
     int intersections[maxY * 2 + 5];
-    
+
     for(int y = minY; y <= maxY; y++)
     {   
         int count = 0;

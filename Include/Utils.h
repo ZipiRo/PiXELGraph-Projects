@@ -51,3 +51,12 @@ int IRandomRange(int min, int max)
 {
     return min + rand() % (max - min + 1);
 }
+
+Color RandomColor()
+{
+    int r = IRandomRange(1, 255);
+    int g = IRandomRange(1, 255);
+    int b = IRandomRange(1, 255);
+
+    return Color(r, g, b);
+}

@@ -32,7 +32,7 @@ Screen::Screen()
 
 Screen::Screen(int width, int height)
 {
-    this->width = width - 1;
+    this->width = width;
     this->height = height - 1;
     this->screen = std::vector<Color>(this->width * this->height);
 }

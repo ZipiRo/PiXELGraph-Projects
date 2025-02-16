@@ -35,10 +35,10 @@ const int MAX_HEIGHT = 1080 / MAX_PIXELSIZE;
 #include "Vector2.h"
 #include "Math.h"
 #include "Box.h"
-#include "Utils.h"
 
-#include "Font.h"
 #include "Color.h"
+#include "Font.h"
+#include "Utils.h"
 #include "Screen.h"
 #include "Transform.h"
 #include "Shape.h"
