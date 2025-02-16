@@ -9,12 +9,9 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color::White; 
-        this->windowTitle = L"TicTacToe";
-        this->timeScale = 1;
-        this->FPS = 60;
+        SetTitle(L"TicTacToe");
 
-        Init(gameWidth + 1, gameHeight + 15 + 1, 4); // +1 for centering
+        Init((gameWidth + 1) * 4, (gameHeight + 15 + 1) * 4, 4); // +1 for centering
     }
 
 private:
@@ -214,7 +211,7 @@ private:
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
-            SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
+            SetWindowTitle(GetWindowTitle() + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
             frameTimer = 0;
         }
 

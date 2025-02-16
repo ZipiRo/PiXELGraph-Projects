@@ -119,6 +119,12 @@ enum Mouse
 class InputSystem 
 {
 public:
+    InputSystem() {}
+    InputSystem(winapi::HWND *HWNDConsole)
+    {   
+        this->HWNDConsole = HWNDConsole;
+    }
+
     void PollInput() 
     {
         for (auto& [key, state] : keyStates) 
@@ -144,13 +150,12 @@ public:
         winapi::POINT point;
         if (winapi::GetCursorPos(&point)) 
         {
-            winapi::HWND hwnd = winapi::GetForegroundWindow();
-            if (hwnd && winapi::ScreenToClient(hwnd, &point)) 
+            if (winapi::ScreenToClient(*HWNDConsole, &point)) 
             {
                 mousePositionX = point.x;
                 mousePositionY = point.y;
             }
-        }
+        }   
     }
 
     bool isKeyDown(Keyboard key) const 
@@ -257,4 +262,6 @@ private:
     std::unordered_map<Mouse, MouseButtonState> mouseButtonStates;
     int mousePositionX = 0;
     int mousePositionY = 0;
+
+    winapi::HWND *HWNDConsole;
 };

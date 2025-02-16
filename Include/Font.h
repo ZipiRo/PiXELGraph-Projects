@@ -12,15 +12,16 @@ using json = nlohmann::json;
 
 void CreateFontTable(const std::string &file, std::map<char, Glyph>& glyphs)
 {
-    if (file.substr(file.find_last_of(".") + 1) != "f2p") {
-        std::cerr << "Invalid file extension. Expected '.f2p'.\n";
+    if (file.substr(file.find_last_of(".") + 1) != "f2p") 
+    {
+        throw Error("Invalid file extension. Expected '.f2p'.");
         return;
     }
 
     std::ifstream FILE(file);
     if(!FILE)
     {   
-        std::cerr << "Failed to open font file: " << file << std::endl;
+        throw Error("Failed to open font file: " + file + '.');
         return;
     }
 
@@ -29,7 +30,7 @@ void CreateFontTable(const std::string &file, std::map<char, Glyph>& glyphs)
 
     if(!fontData.contains("glyphs"))
     {
-        std::cerr << "Invalid font file format: Missing 'glyphs' key" << file << std::endl;
+        throw Error("Invalid font file format: Missing 'glyphs' key" + file + '.');
         return;
     }
 

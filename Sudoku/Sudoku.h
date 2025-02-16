@@ -82,12 +82,9 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color::White;
-        this->windowTitle = L"Sudoku";
-        this->timeScale = 1;
-        this->FPS = 120;
-
-        Init(190, 190, 3);
+        SetTitle(L"Sudoku");
+      
+        Init(190 * 3, 190 * 3, 3);
     }
 
 private:
@@ -310,7 +307,7 @@ private:
             ParseColorPalette(x);
         }
 
-        backgroundColor = Color(color1.r + 30, color1.g + 20, color1.b + 40);
+        SetScreenBackgroundColor(Color(color1.r + 30, color1.g + 20, color1.b + 40));
 
         titleColor = color3;
         
@@ -381,7 +378,7 @@ private:
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
-            SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
+            SetWindowTitle(GetWindowTitle() + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
             frameTimer = 0;
         }
 

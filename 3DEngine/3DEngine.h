@@ -149,12 +149,10 @@ class Game : public PiXELGraph
 public:
     Game()
     {
-        this->backgroundColor = Color(6, 174, 200); 
-        this->windowTitle = L"3D Engine";
-        this->timeScale = 1;
-        this->FPS = 9999;
+        SetScreenBackgroundColor(Color(6, 174, 200)); 
+        SetTitle(L"3DEngine");
 
-        Init(1240 / 4, 720 / 4, 3);
+        Init(1240, 720, 3);
     }
 
 private:
@@ -241,7 +239,7 @@ private:
         frameTimer += deltaTime;
         if(frameTimer >= 1)
         {
-            SetWindowTitle(windowTitle + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
+            SetWindowTitle(GetWindowTitle() + L" | FPS: " + std::to_wstring(int (1 / deltaTime)) + L" | DT: " + std::to_wstring(deltaTime) + L" MS");
             frameTimer = 0;
         }
 
