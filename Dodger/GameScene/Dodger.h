@@ -18,9 +18,9 @@ public:
 
     ///
     //TO DO: Player PowerUps 
-    //Slow Motion
-    //Player Speed Boost
-    //Player Size Boost
+    //  Slow Motion
+    //  Player Speed Boost
+    //  Player Size Boost
     /// 
 
 private:
@@ -49,14 +49,14 @@ private:
 
     void OnStart() override
     {
-        srand(time(NULL));
-
         font = Font("Resources/basic.f2p");
-        InitUIText();
+        
+        srand(time(NULL));
 
         screenBorder = GetScreenBounds();
         screenWidth = GetScreenWidth();
         screenHeight = GetScreenHeight();
+        InitUIText();
 
         spawner = ObjectSpawner(screenWidth, screenHeight);
         player = Player(screenWidth / 2, screenHeight - 20, 25, 5);

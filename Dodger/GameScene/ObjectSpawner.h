@@ -13,8 +13,6 @@ private:
         bool anyDstroyedObject = false;
         Color destroyedObject_color;
         int destroyedObjectsCount = 0;
-
-        int nextStageAmount = 100;
     };
 
     struct SpawnerStage
@@ -37,6 +35,8 @@ private:
     std::list<FallingObject> objects;
     float spawnTimer;
     float spawnStartTime;
+
+    int nextStageAmount = 100;
 
     float spawnWidth;
     float bottomBorder;
@@ -104,7 +104,7 @@ public:
                 object_it = objects.erase(object_it);
 
                 
-                if((params.destroyedObjectsCount + 1) % params.nextStageAmount == 0)
+                if((params.destroyedObjectsCount + 1) % nextStageAmount == 0)
                     stage = CreateNextStage();
             }
             else
