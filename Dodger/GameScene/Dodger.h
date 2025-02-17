@@ -1,5 +1,5 @@
-#include "../include/PixelGraph.h"
-#include "ParticleSystem.h"
+#include "../../include/PixelGraph.h"
+#include "../ParticleSystem.h"
 
 #include "Player.h"
 #include "FallingObject.h"
@@ -18,6 +18,10 @@ public:
 
     ///
     //TO DO: Player PowerUps 
+    //Slow Motion
+    //Player Speed Boost
+    //Player Size Boost
+    /// 
 
 private:
     ObjectSpawner spawner;
@@ -45,6 +49,8 @@ private:
 
     void OnStart() override
     {
+        srand(time(NULL));
+
         font = Font("Resources/basic.f2p");
         InitUIText();
 
@@ -52,7 +58,7 @@ private:
         screenWidth = GetScreenWidth();
         screenHeight = GetScreenHeight();
 
-        spawner = ObjectSpawner(screenWidth, screenHeight, 3);
+        spawner = ObjectSpawner(screenWidth, screenHeight);
         player = Player(screenWidth / 2, screenHeight - 20, 25, 5);
         player.SetMoveingBorder(0, screenWidth);
 
@@ -61,6 +67,9 @@ private:
 
     void OnUpdate(float deltaTime) override
     {
+        if(input.isKeyPressed(Keyboard::Key_Escape))
+            Quit();
+
         if(input.isKeyDown(Keyboard::Key_RightArrow) || input.isKeyDown(Keyboard::Key_D))
             player.Move(1 * deltaTime);
 

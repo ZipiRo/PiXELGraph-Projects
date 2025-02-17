@@ -92,11 +92,12 @@ public:
         // Make Player Tilt In The Moveing Direction
         if(direction > 0)
         {
-            angle = 10 * DEG_TO_RAD;
+            angle = 5 * DEG_TO_RAD;
         }
-        else if(direction < 0) 
+        
+        if(direction < 0) 
         {
-            angle = -10 * DEG_TO_RAD; 
+            angle = -5 * DEG_TO_RAD; 
         }
 
         // Clip Movemant To Left, Right Borders

@@ -18,6 +18,7 @@ private:
 
     bool updateC;
     bool updateF;
+    
 public:
     FallingObject() {}
     FallingObject(float x, float y, float width, float height, int type)
