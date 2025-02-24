@@ -36,7 +36,7 @@ private:
     float spawnTimer;
     float spawnStartTime;
 
-    int nextStageAmount = 100;
+    int nextStageAmount = 50;
 
     float spawnWidth;
     float bottomBorder;

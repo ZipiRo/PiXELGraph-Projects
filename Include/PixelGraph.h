@@ -220,8 +220,8 @@ void PiXELGraph::HandleError(const std::string& errorMsg)
 {
     window.ConstructOGConsole();
 
-    std::cerr << "Error: " << errorMsg << std::endl;
-    std::cerr << "Press Enter to exit..." << std::endl;
+    std::cerr << "Error: " << errorMsg << '\n';
+    std::cerr << "Press Enter to exit..." << '\n';
 
     this->OnQuit();
     std::cin.get();

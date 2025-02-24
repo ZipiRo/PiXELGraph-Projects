@@ -22,6 +22,8 @@ public:
     //  Player Speed Boost
     //  Player Size Boost
     /// 
+    //Pause Menu
+    ///
 
 private:
     ObjectSpawner spawner;
@@ -29,11 +31,41 @@ private:
     Player player;
     int screenWidth;
     int screenHeight;
-
+    int highScore;
     Box screenBorder;
     
     Font font;
     std::vector<Text> ui_Texts;
+    std::string saveFileName = "DodgerSaveFile";
+
+    int LoadSaveFile()
+    {
+        std::ifstream saveFile(saveFileName, std::ios::binary);
+        if(!saveFile)
+        {
+            CreateSaveFile();
+            return 0;
+        }
+        
+        int data;
+        saveFile.read(reinterpret_cast<char*>(&data), sizeof(data));
+        saveFile.close();
+
+        return data;
+    }
+
+    void CreateSaveFile(int highScore = 0)
+    {
+        std::ofstream saveFile(saveFileName, std::ios::binary);
+        if(!saveFile)
+        {
+            std::system(strcat("touch >> ", saveFileName.c_str()));
+            saveFile.open(saveFileName, std::ios::binary);
+        }
+
+        saveFile.write(reinterpret_cast<const char*>(&highScore), sizeof(highScore));
+        saveFile.close();
+    }
 
     void InitUIText()
     {
@@ -41,14 +73,20 @@ private:
 
         ui_Texts.push_back(score_Text);
 
+        Text highScore_Text(5, screenHeight - 10);
+
+        ui_Texts.push_back(highScore_Text);
+
         for(auto &text : ui_Texts)
             text.SetFont(font);
 
         ui_Texts[0].SetString("SCORE:0");
+        ui_Texts[1].SetString("HIGHSCORE:" + std::to_string(highScore));
     }
 
     void OnStart() override
     {
+        highScore = LoadSaveFile();
         font = Font("Resources/basic.f2p");
         
         srand(time(NULL));
@@ -101,6 +139,6 @@ private:
 
     void OnQuit() override
     {
-
+        CreateSaveFile(highScore < spawner.params.destroyedObjectsCount ? spawner.params.destroyedObjectsCount : highScore); // if the score is bigger then the highScore than write score
     }
 };
