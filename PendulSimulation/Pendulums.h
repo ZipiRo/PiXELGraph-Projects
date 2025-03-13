@@ -1,5 +1,8 @@
 #pragma once
 
+const float g = 9.81;
+const float pixelsPerMeter = 10;
+
 class ConstantPendul
 {
 private:
@@ -16,15 +19,15 @@ public:
 
     ConstantPendul() {}
 
-    ConstantPendul(float length, float period, Vector2 anchor, bool addPoints = false)
+    ConstantPendul(float length, float period, Vector2 anchor)
     {
         this->position = Vector2::ZERO;
         this->length = length;
         this->period = period;
         this->anchor = anchor;
-        this->addPoints = addPoints;
+        this->addPoints = false;
 
-        e = Elipse(0, 0, 3, 3, 15);
+        e = Elipse(0, 0, 3, 3, 5);
 
         e.SetFillColor(Color::White);
         e.SetOutlineColor(Color::White);
@@ -40,7 +43,8 @@ public:
         float x = cos(angle) * length;
         float y = sin(angle) * length;
 
-        position = Vector2(x, y) + anchor;
+        position = Vector2(x, y) * pixelsPerMeter;
+        position += anchor;
 
         if(addPoints)
             points.push_back(position);
@@ -73,7 +77,7 @@ private:
     float inertia;
     float rCM;
     float period;
-    float theta;
+    float amplitude;
     float time;
 
 public:
@@ -83,7 +87,7 @@ public:
 
     CompoundPendulum() {}
 
-    CompoundPendulum(Vector2 anchor, float length, float mass, float amplitude, bool addPoints = false)
+    CompoundPendulum(Vector2 anchor, float length, float mass, float amplitude)
     {
         this->position = Vector2::ZERO;
         this->length = length;
@@ -93,10 +97,10 @@ public:
         this->time = 0;
         this->rCM = length;
         this->inertia = (mass * length * length) / 3;
-        this->theta = amplitude;
-        this->period = 2 * PI * sqrt(inertia / (mass * 9.81 * rCM));
+        this->amplitude = amplitude;
+        this->period = 2 * PI * sqrt(inertia / (mass * g * rCM));
 
-        this->addPoints = addPoints;
+        this->addPoints = false;
 
         e = Elipse(0, 0, 3, 3, 15);
         e.SetFillColor(Color::White);
@@ -109,12 +113,13 @@ public:
         time += deltaTime;
 
         float cos0 = cos((2 * PI * time) / period);
-        float theta = theta * cos0 - PI / 2;
+        float theta = amplitude * cos0 - PI / 2;
 
         float x = length * cos(theta);
         float y = -length * sin(theta);
 
-        this->position = Vector2(x, y) + anchor;
+        position = Vector2(x, y) * pixelsPerMeter;
+        position += anchor;
 
         if(addPoints)
             points.push_back(position);
@@ -142,10 +147,16 @@ private:
     
     Vector2 anchor;
 
+    float angularVelocity;
     float length;
     float theta;
-    float angularVelocity;
+    float mass;
+    float inertia;
+    float dampingFactor;
+    float invInertia;
 
+    float currentAngularAcc;
+    float timer;
 public:
     bool addPoints;
     std::vector<Vector2> points;
@@ -153,18 +164,23 @@ public:
 
     GravityPendulum() {}
 
-    GravityPendulum(Vector2 anchor, float length, float mass, float amplitude, bool addPoints = false)
+    GravityPendulum(Vector2 anchor, float length, float mass, float amplitude, float dampingFactor = 0.1f)
     {
         this->position = Vector2::ZERO;
-        this->length = length;
         this->anchor = anchor;
-
+        this->length = length;
+        this->mass = mass;
         this->theta = amplitude;
+        this->dampingFactor = dampingFactor;
+        
+        this->inertia = mass * length * length / 3;
+        this->invInertia = 1 / inertia;
         this->angularVelocity = 0;
+        this->timer = 0;
 
-        this->addPoints = addPoints;
+        this->addPoints = false;
 
-        e = Elipse(0, 0, 3, 3, 15);
+        e = Elipse(0, 0, 3, 3, 5);
         e.SetFillColor(Color::White);
         e.SetOutlineColor(Color::White);
         e.SetPivot({0.5, 0.5});
@@ -172,14 +188,18 @@ public:
 
     void update(float deltaTime)
     {
-        float angularAcceleration = (-20.81 / length) * sin(theta - PI / 2);
+        timer += deltaTime;
+        float angularAcceleration = (-g * sin(theta - PI / 2)) / length - (dampingFactor * invInertia) * angularVelocity;
+        currentAngularAcc = angularAcceleration;
+
         angularVelocity += angularAcceleration * deltaTime;
         theta += angularVelocity * deltaTime;
 
         float x = length * sin(theta + PI / 2);
         float y = -length * cos(theta + PI / 2);
 
-        this->position = Vector2(x, y) + anchor;
+        position = Vector2(x, y) * pixelsPerMeter;
+        position += anchor;
 
         if(addPoints)
             points.push_back(position);
@@ -197,5 +217,20 @@ public:
         DrawLine(screen, anchor.x, anchor.y, position.x, position.y, Color::White);
 
         e.Draw(screen);
+    }
+
+    float GetAngularVelocity()
+    {   
+        return angularVelocity;
+    }
+    
+    float GetCurenAngularAcc()
+    {   
+        return currentAngularAcc;
+    }
+
+    float Timer()
+    {
+        return timer;
     }
 };

@@ -9,10 +9,8 @@ public:
         SetTitle(L"Pendulums");
         SetScreenBackgroundColor(Color::Black);
         SetMaxFPS(9999);
-        
-        SetTimeScale(2);
 
-        Init(1240, 720, 2);
+        Init(1240, 720, 3);
     }
 
 private:
@@ -42,7 +40,9 @@ private:
 
     Text text1;
 
-    GravityPendulum gp1, gp2, gp3;
+    GravityPendulum gp1;
+    ConstantPendul cp1;
+    CompoundPendulum cmp1;
 
     void OnStart() override
     {
@@ -55,9 +55,16 @@ private:
         text1.SetFont(font);
         text1.SetColor(Color::White);
 
-        gp1 = GravityPendulum(Vector2(screenWidth / 2, screenHeight / 2), 70, 10, -1);
-        gp2 = GravityPendulum(Vector2(screenWidth / 2, screenHeight / 2), 60, 50, -1);
-        gp3 = GravityPendulum(Vector2(screenWidth / 2, screenHeight / 2), 50, 30, -1, true);
+        float screenXMid = screenWidth / 2;
+        float screenYMid = screenHeight / 4;
+
+        cp1 = ConstantPendul(3, PI / 3, Vector2(screenXMid / 2, screenYMid));
+        gp1 = GravityPendulum(Vector2(screenXMid, screenYMid), 3, 3, -PI / 6, 0.5);
+        cmp1 = CompoundPendulum(Vector2(screenWidth - screenXMid / 2, screenYMid), 3, 3, 0.6);
+
+        cp1.addPoints = true;
+        gp1.addPoints = true;
+        cmp1.addPoints = true;
     }
 
     void OnUpdate(float deltaTime) override
@@ -69,20 +76,26 @@ private:
             frameTimer = 0;
         }
 
+        cp1.update(deltaTime);
         gp1.update(deltaTime);
-        gp2.update(deltaTime, gp1.position);
-        gp3.update(deltaTime, gp2.position);
+        cmp1.update(deltaTime);
     }
 
     void OnDraw(Screen &screen) override
     {   
         text1.Draw(screen);
 
+        cp1.draw(screen);
         gp1.draw(screen);
-        gp2.draw(screen);
-        gp3.draw(screen);
+        cmp1.draw(screen);
 
-        DrawOpenLines(screen, gp3.points, Color::White);
+        DrawOpenLines(screen, cp1.points, Color::Red);
+        DrawOpenLines(screen, gp1.points, Color::Green);
+        DrawOpenLines(screen, cmp1.points, Color::Blue);
+
+        screen.PlotPixel(cp1.points.back().x, cp1.points.back().y, Color::Black);
+        screen.PlotPixel(gp1.points.back().x, gp1.points.back().y, Color::Black);
+        screen.PlotPixel(cmp1.points.back().x, cmp1.points.back().y, Color::Black);
     }
 
     void OnQuit() override
