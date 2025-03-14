@@ -35,14 +35,11 @@ private:
     int screenWidth;
     int screenHeight;
     float frameTimer = 1;
-    int currentTimeScale = 1;
     Vector2 screenMousePosition;
 
     Text text1;
 
-    GravityPendulum gp1;
-    ConstantPendul cp1;
-    CompoundPendulum cmp1;
+    DoublePendulum dp1;
 
     void OnStart() override
     {
@@ -56,15 +53,10 @@ private:
         text1.SetColor(Color::White);
 
         float screenXMid = screenWidth / 2;
-        float screenYMid = screenHeight / 4;
-
-        cp1 = ConstantPendul(3, PI / 3, Vector2(screenXMid / 2, screenYMid));
-        gp1 = GravityPendulum(Vector2(screenXMid, screenYMid), 3, 3, -PI / 6, 0.5);
-        cmp1 = CompoundPendulum(Vector2(screenWidth - screenXMid / 2, screenYMid), 3, 3, 0.6);
-
-        cp1.addPoints = true;
-        gp1.addPoints = true;
-        cmp1.addPoints = true;
+        float screenYMid = screenHeight / 2;
+        
+        dp1 = DoublePendulum({screenXMid, screenYMid}, 5, 3, 70, 50, 0, 0);
+        dp1.addPoints = true;
     }
 
     void OnUpdate(float deltaTime) override
@@ -76,26 +68,14 @@ private:
             frameTimer = 0;
         }
 
-        cp1.update(deltaTime);
-        gp1.update(deltaTime);
-        cmp1.update(deltaTime);
+        dp1.update(deltaTime);
     }
 
     void OnDraw(Screen &screen) override
     {   
         text1.Draw(screen);
-
-        cp1.draw(screen);
-        gp1.draw(screen);
-        cmp1.draw(screen);
-
-        DrawOpenLines(screen, cp1.points, Color::Red);
-        DrawOpenLines(screen, gp1.points, Color::Green);
-        DrawOpenLines(screen, cmp1.points, Color::Blue);
-
-        screen.PlotPixel(cp1.points.back().x, cp1.points.back().y, Color::Black);
-        screen.PlotPixel(gp1.points.back().x, gp1.points.back().y, Color::Black);
-        screen.PlotPixel(cmp1.points.back().x, cmp1.points.back().y, Color::Black);
+        dp1.draw(screen);
+        DrawOpenLines(screen, dp1.points, Color::Red);
     }
 
     void OnQuit() override
