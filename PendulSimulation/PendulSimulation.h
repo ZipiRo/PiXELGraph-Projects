@@ -10,7 +10,7 @@ public:
         SetScreenBackgroundColor(Color::Black);
         SetMaxFPS(9999);
 
-        Init(1240, 720, 3);
+        Init(1240, 720, 2);
     }
 
 private:
@@ -55,7 +55,7 @@ private:
         float screenXMid = screenWidth / 2;
         float screenYMid = screenHeight / 2;
         
-        dp1 = DoublePendulum({screenXMid, screenYMid}, 5, 3, 70, 50, 0, 0);
+        dp1 = DoublePendulum({screenXMid, screenYMid}, 5, 3, 70, 50, PI, PI - 0.05);
         dp1.addPoints = true;
     }
 
@@ -74,7 +74,9 @@ private:
     void OnDraw(Screen &screen) override
     {   
         text1.Draw(screen);
+        
         dp1.draw(screen);
+
         DrawOpenLines(screen, dp1.points, Color::Red);
     }
 

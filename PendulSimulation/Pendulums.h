@@ -282,7 +282,7 @@ public:
     {
         float num1 = -g * (2 * m1 + m2) * sin(theta1);
         float num2 = -m2 * g * sin(theta1 - 2 * theta2);
-        float num3 = -2 * sin(theta1 - theta2) * m2 * (omega2 * omega2 * L2 + omega1 * omega1 * L1 * cos(theta1 - theta2 ));
+        float num3 = -2 * sin(theta1 - theta2) * m2 * (omega2 * omega2 * L2 + omega1 * omega1 * L1 * cos(theta1 - theta2));
         float den1 = I1 + m2 * L1 * L1;
         float alpha1 = (num1 + num2 + num3) / den1 - dampingFactor * omega1;
 
