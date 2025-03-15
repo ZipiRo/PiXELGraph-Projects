@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include <cmath>
 #include <string>
 #include <vector>
@@ -8,7 +9,7 @@
 #include <thread>
 #include <chrono>
 #include <random>
-#include "Include/PixelGraph.h"
+#include "PixelGraph.h"
 
 ////
 //  By ZipiRo
@@ -32,7 +33,7 @@ int main() {
     Vector2 cursorPosition;
     std::vector<Vector2> points;
     std::vector<int> indices;
-    char character;
+    char character[10];
 
     // State variables
     bool DRAWPOINTS = true;
@@ -198,11 +199,12 @@ int main() {
 
     if (!SAVE) return 0;
 
+    std::ofstream out;
     // **Parsing and Saving Data**
-    std::ofstream out("glyph.txt");
     std::cin >> character;
+    out.open(strcat(character, ".txt"));
 
-    out << "\"" << character << "\": {\n";
+    out << "\"" << character[0] << "\": {\n";
     out << "     \"vertices\": [";
     for (size_t i = 0; i < points.size(); ++i) {
         out << "[" << float(points[i].x) / RES << ", " << float(points[i].y) / RES << "]";

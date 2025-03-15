@@ -1,5 +1,21 @@
 #include "../include/PixelGraph.h"
+void DrawOpenLines(Screen &screen, const std::vector<Vector2> &vertices, Color color, int thickness = 1)
+{
+    for(auto vertex = vertices.begin(); vertex != vertices.end(); ++vertex)
+    {
+        auto next_vertex = std::next(vertex);
+        if(next_vertex == vertices.end())
+            break;
+        
+        Vector2 vertexA = *vertex;
+        Vector2 vertexB = *next_vertex;
+        if(thickness > 1) DrawThickLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, thickness, color);
+            else DrawLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, color);
+    }
+}
+
 #include "Pendulums.h"
+#include "Spring.h"
 
 class Simulation : public PiXELGraph
 {
@@ -14,22 +30,6 @@ public:
     }
 
 private:
-
-    void DrawOpenLines(Screen &screen, const std::vector<Vector2> &vertices, Color color, int thickness = 1)
-    {
-        for(auto vertex = vertices.begin(); vertex != vertices.end(); ++vertex)
-        {
-            auto next_vertex = std::next(vertex);
-            if(next_vertex == vertices.end())
-                break;
-            
-            Vector2 vertexA = *vertex;
-            Vector2 vertexB = *next_vertex;
-            if(thickness > 1) DrawThickLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, thickness, color);
-                else DrawLine(screen, vertexA.x, vertexA.y, vertexB.x, vertexB.y, color);
-        }
-    }
-
     Font font;
     Box screenBorder;
     int screenWidth;
@@ -39,7 +39,7 @@ private:
 
     Text text1;
 
-    DoublePendulum dp1;
+    Rope r;
 
     void OnStart() override
     {
@@ -55,8 +55,8 @@ private:
         float screenXMid = screenWidth / 2;
         float screenYMid = screenHeight / 2;
         
-        dp1 = DoublePendulum({screenXMid, screenYMid}, 5, 3, 70, 50, PI, PI - 0.05);
-        dp1.addPoints = true;
+        r = Rope(Vector2(screenXMid, screenYMid));
+
     }
 
     void OnUpdate(float deltaTime) override
@@ -68,16 +68,13 @@ private:
             frameTimer = 0;
         }
 
-        dp1.update(deltaTime);
+        r.update(deltaTime);
     }
 
     void OnDraw(Screen &screen) override
     {   
         text1.Draw(screen);
-        
-        dp1.draw(screen);
-
-        DrawOpenLines(screen, dp1.points, Color::Red);
+        r.draw(screen);
     }
 
     void OnQuit() override

@@ -321,3 +321,73 @@ public:
         e.Draw(screen);
     }
 };
+
+struct RopeSegment
+{
+    Vector2 position;
+    Vector2 oldPosition; // For Verlet integration
+
+    RopeSegment(Vector2 pos) : position(pos), oldPosition(pos) {}
+};
+
+class Rope
+{
+private:
+    int numSegments = 10; // Number of rope segments
+    float segmentLength = 20.0f; // Length of each segment
+    int constraintIterations = 5; // More iterations = stiffer rope
+    std::vector<RopeSegment> segments;
+    Vector2 anchor; // The fixed point at the top
+
+public:
+    Rope() {}
+
+    Rope(Vector2 startPos)
+    {
+        anchor = startPos;
+
+        // Create rope segments
+        for (int i = 0; i < numSegments; i++)
+        {
+            segments.push_back(RopeSegment(Vector2(startPos.x * 10, startPos.y + i * segmentLength)));
+        }
+    }
+
+    void update(float deltaTime)
+    {
+        // Verlet integration step: move segments based on gravity
+        for (size_t i = 1; i < segments.size(); i++) // Ignore the anchor (fixed point)
+        {
+            Vector2 velocity = segments[i].position - segments[i].oldPosition;
+            segments[i].oldPosition = segments[i].position;
+            segments[i].position += velocity;
+            segments[i].position.y += g * deltaTime * deltaTime; // Apply gravity
+        }
+
+        // Apply constraints (make sure segments stay at fixed length)
+        for (int j = 0; j < constraintIterations; j++)
+        {
+            segments[0].position = anchor; // Keep the first segment fixed
+
+            for (size_t i = 0; i < segments.size() - 1; i++)
+            {
+                Vector2 diff = segments[i + 1].position - segments[i].position;
+                float dist = Vector2::Length(diff);
+                float error = segmentLength - dist;
+                Vector2 correction = Vector2::Normalize(diff) * (error * 0.5f);
+
+                if (i > 0) // Do not move the fixed anchor
+                    segments[i].position -= correction;
+                segments[i + 1].position += correction;
+            }
+        }
+    }
+
+    void draw(Screen &screen)
+    {
+        for (size_t i = 0; i < segments.size() - 1; i++)
+        {
+            DrawLine(screen, segments[i].position.x, segments[i].position.y, segments[i + 1].position.x, segments[i + 1].position.y, Color::White);
+        }
+    }
+};
