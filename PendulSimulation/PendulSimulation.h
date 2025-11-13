@@ -1,4 +1,5 @@
 #include "../include/PixelGraph.h"
+
 void DrawOpenLines(Screen &screen, const std::vector<Vector2> &vertices, Color color, int thickness = 1)
 {
     for(auto vertex = vertices.begin(); vertex != vertices.end(); ++vertex)
@@ -26,7 +27,7 @@ public:
         SetScreenBackgroundColor(Color::Black);
         SetMaxFPS(9999);
 
-        Init(1240, 720, 2);
+        Init(1240, 720, 1);
     }
 
 private:

@@ -178,11 +178,11 @@ void PiXELGraph::Run()
             {
                 timer.Reset();
                 this->OnUpdate(timer.DeltaTime());
-            }
 
-            screen.Clear(backgroundColor);
-            this->OnDraw(screen);
-            screen.Display();
+                screen.Clear(backgroundColor);
+                this->OnDraw(screen);
+                screen.Display();
+            }
         }
 
         this->OnQuit();

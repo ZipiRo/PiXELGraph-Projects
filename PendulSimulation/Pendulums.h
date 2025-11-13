@@ -333,8 +333,8 @@ struct RopeSegment
 class Rope
 {
 private:
-    int numSegments = 10; // Number of rope segments
-    float segmentLength = 20.0f; // Length of each segment
+    int numSegments = 50; // Number of rope segments
+    float segmentLength = 5.0f; // Length of each segment
     int constraintIterations = 5; // More iterations = stiffer rope
     std::vector<RopeSegment> segments;
     Vector2 anchor; // The fixed point at the top
