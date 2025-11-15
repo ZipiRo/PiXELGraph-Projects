@@ -9,7 +9,7 @@ void HandleBoundCollision(Ball &ball, const Vector2 &normal)
     if (vDotNormal < 0.0f)
     {
         ball.linearVelocity -= normal * vDotNormal * (1.0f + ball.restitution);
-        ball.linearVelocity *= 0.98f;
+        // ball.linearVelocity *= 0.98f;
     }
 }
 
@@ -19,23 +19,23 @@ void CollideWorldBounds(Ball &ball, const AABB &worldViewBounds)
     Vector2 position = ball.GetPosition();
     float radius = ball.GetRadius();
 
-    if (ballBoundingBox.left < worldViewBounds.left)
+    if (position.x - radius <= worldViewBounds.left)
     {
         ball.SetPosition({worldViewBounds.left + radius, position.y});
         HandleBoundCollision(ball, Vector2(1, 0));
     }
-    else if (ballBoundingBox.right > worldViewBounds.right)
+    else if (position.x + radius > worldViewBounds.right)
     {
         ball.SetPosition({worldViewBounds.right - radius, position.y});
         HandleBoundCollision(ball, Vector2(-1, 0));
     }
 
-    if (ballBoundingBox.bottom > worldViewBounds.bottom)
+    if (position.y + radius > worldViewBounds.bottom)
     {
         ball.SetPosition({position.x, worldViewBounds.bottom - radius});
         HandleBoundCollision(ball, Vector2(0, -1));
     }
-    else if (ballBoundingBox.top < worldViewBounds.top)
+    else if (position.y - radius < worldViewBounds.top)
     {
         ball.SetPosition({position.x, worldViewBounds.top + radius});
         HandleBoundCollision(ball, Vector2(0, 1));

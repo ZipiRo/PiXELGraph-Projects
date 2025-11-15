@@ -158,6 +158,6 @@ public:
     {
         Screen::BacgroundColor = Color::Black;
         MaxFPS = 60;
-        Init(1280, 720, 2, L"Game");
+        Init(1280, 720, 1, L"Game");
     }
 };
